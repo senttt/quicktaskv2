@@ -1,0 +1,11 @@
+.user-accounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 20px;
+}
+
+.user-account {
+  background-color: rgb(235, 235, 235);
+  padding: 10px;
+  margin: 3%;
+}

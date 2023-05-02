@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./TaskManagement.css";
+import { getDatabase, ref, onValue, push, set } from "firebase/database";
 
 const TaskManagement = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,6 +11,21 @@ const TaskManagement = () => {
     time: "",
   });
 
+  useEffect(() => {
+    const db = getDatabase();
+    const tasksRef = ref(db, "tasks");
+    onValue(tasksRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const taskArray = Object.keys(data).map((taskId) => ({
+          id: taskId,
+          ...data[taskId],
+        }));
+        setTasks(taskArray);
+      }
+    });
+  }, []);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setNewTask((prevTask) => ({
@@ -18,7 +35,9 @@ const TaskManagement = () => {
   };
 
   const handleAddTask = () => {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    const db = getDatabase();
+    const taskRef = push(ref(db, "tasks"));
+    set(taskRef, newTask);
     setNewTask({
       user: "",
       task: "",
@@ -32,11 +51,9 @@ const TaskManagement = () => {
   };
 
   const handleSaveTask = () => {
-    setTasks((prevTasks) => {
-      const newTasks = [...prevTasks];
-      newTasks[editingIndex] = newTask;
-      return newTasks;
-    });
+    const db = getDatabase();
+    const taskRef = ref(db, "tasks/" + newTask.id);
+    set(taskRef, newTask);
     setNewTask({
       user: "",
       task: "",
@@ -46,39 +63,13 @@ const TaskManagement = () => {
   };
 
   const handleDeleteTask = (index) => {
-    setTasks((prevTasks) => {
-      const newTasks = [...prevTasks];
-      newTasks.splice(index, 1);
-      return newTasks;
-    });
+    const db = getDatabase();
+    const taskRef = ref(db, "tasks/" + tasks[index].id);
+    set(taskRef, null);
   };
 
   return (
     <div style={{ padding: "20%" }}>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Task</th>
-            <th>Time</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task, index) => (
-            <tr key={index}>
-              <td>{task.user}</td>
-              <td>{task.task}</td>
-              <td>{task.time}</td>
-              <td>
-                <button onClick={() => handleEditTask(index)}>Edit</button>
-                <button onClick={() => handleDeleteTask(index)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
       <div>
         <input
           type="text"
@@ -110,6 +101,30 @@ const TaskManagement = () => {
           <button onClick={handleAddTask}>Add</button>
         )}
       </div>
+      <br></br>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Task</th>
+            <th>Time</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map((task, index) => (
+            <tr key={task.id}>
+              <td>{task.user}</td>
+              <td>{task.task}</td>
+              <td>{task.time}</td>
+              <td>
+                <button onClick={() => handleEditTask(index)}>Edit</button>
+                <button onClick={() => handleDeleteTask(index)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

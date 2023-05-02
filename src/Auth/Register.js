@@ -1,68 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../Firebase/firebaseConfig";
+import { getDatabase, ref, set } from "firebase/database";
 import "./Register.css";
-import BeforeAuthTemplate from "../Templates/BeforeAuthTemplate";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-  return (
-    <div>
-      <div className="register-container">
-        <h1>Sign up for an account</h1>
-        <form>
-          <div className="form-group">
-            <div className="name-inputs">
-              <div className="input-fields1">
-                <input
-                  type="text"
-                  id="first-name"
-                  name="first-name"
-                  placeholder="First Name"
-                />
-              </div>
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-              <div className="input-fields2">
-                <input
-                  type="text"
-                  id="last-name"
-                  name="last-name"
-                  placeholder="Last Name"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="form-group">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Choose a username"
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Choose a password"
-            />
-          </div>
-          <div className="form-group">
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirm-password"
-              placeholder="Confirm your password"
-            />
-          </div>
-          <button type="submit">Register</button>
-        </form>
+  const signUp = async () => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const db = getDatabase();
+      set(ref(db, "users/" + auth.currentUser.uid + "/userInfo"), {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        isSetUp: false,
+      });
+      navigate("/dashboard"); // navigate to the login page after successful registration
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  return (
+    <div className="container">
+      <div className="registration-form">
+        <h1>Register</h1>
+        <div className="form-group">
+          <label htmlFor="firstName">First Name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            className="form-control"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button className="btn btn-primary" onClick={signUp}>
+          Register
+        </button>
+        {error && <p className="text-danger">{error}</p>}
       </div>
     </div>
   );

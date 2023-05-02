@@ -1,136 +1,107 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Open Sans, sans-serif;
-}
-
-.user-info {
-  margin-top: auto;
-  padding: 10px;
+.task-tracker-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-}
-
-.username {
-  margin-right: 10px;
-}
-
-.sign-out a {
-  font-size: 1.5rem;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* Main Content Styles */
-.main {
-  width: 97.9%;
-  height: 100%;
+  justify-content: center;
   padding: 20px;
 }
 
-header1 h1 {
-  font-size: 32px;
-  text-align: right;
-}
-
-header2 h1 {
-  font-size: 32px;
-  text-align: center;
-}
-
-.dashboard-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.yellow-panel, .green-panel {
-  width: 300px;
-  background-color: #FFD966;
-  margin: 10px;
-  border-radius: 5px;
-  padding: 10px;
-}
-
-.yellow-panel h2, .green-panel h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.task-list, .progress-list {
+.input-fields-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.task-panel, .progress-panel {
-  background-color: #FFF;
+.input-field {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 10px;
-  border-radius: 5px;
-  padding: 10px;
 }
 
-.task-panel h3, .progress-panel h3 {
-  font-size: 18px;
+.input-field label {
   margin-bottom: 5px;
 }
 
-.task-panel p, .progress-panel p {
+.input-field input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.input-field input:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+input[type="text"],
+input[type="number"] {
   font-size: 16px;
-  margin-bottom: 5px;
+  color: #333;
+  padding: 6px;
+  border: 1px solid #ccc;
 }
 
-.green-panel {
-  background-color: #A3D7A3;
+.input-field input[type="number"]::-webkit-inner-spin-button,
+.input-field input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0066cc;
+  color: #fff;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0052a3;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scrollable-table {
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 table {
+  width: 100%;
   border-collapse: collapse;
-  width: 5%;
-  position: center;
 }
 
-th, td {
-  padding: 160px;
+table th,
+table td {
+  padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ccc;
 }
 
-textarea {
-			width: 100%;
-			resize: horizontal;
-		}
-
-table, th, td {
-  border: 1px solid black;
+table th {
+  background-color: #f2f2f2;
 }
 
-.anybutton1 {
-       top:195%;
-       left:45%;
-       width:200px;
-       height:40px;
-       position: absolute;
-       }
-	   
-	   .anybutton2 {
-       top:195%;
-       left:60%;
-       width:200px;
-       height:40px;
-       position: absolute;
-       }
-	   
-	   .anybutton3 {
-       top:195%;
-       left:75%;
-       width:200px;
-       height:40px;
-       position: absolute;
-       }
+table td {
+  vertical-align: middle;
+}
 
-@media (max-width: 768px) {
-  .yellow-panel, .green-panel {
-    width: 100%;
-  }
+table td button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0066cc;
+  color: #fff;
+  cursor: pointer;
+}
+
+table td button:hover {
+  background-color: #0052a3;
 }

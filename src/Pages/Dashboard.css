@@ -1,105 +1,55 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Open Sans, sans-serif;
-}
-
-.user-info {
-  margin-top: auto;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.username {
-  margin-right: 10px;
-}
-
-.sign-out a {
-  font-size: 1.5rem;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* Main Content Styles */
-.main {
-  width: 97.9%;
-  height: 100%;
-  padding: 20px;
-}
-
-header1 h1 {
-  font-size: 32px;
-  text-align: right;
-}
-
-header2 h1 {
-  font-size: 32px;
-  text-align: center;
-}
-
 .dashboard-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
 }
 
-table {
+.deadlines-container,
+.pending-tasks-container,
+.progress-report-container {
+  width: 80%;
+  max-width: 800px;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.deadlines-container h2,
+.pending-tasks-container h2,
+.progress-report-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.deadlines-container table {
+  width: 100%;
   border-collapse: collapse;
-  width: 5%;
-  position: center;
+  margin-bottom: 1rem;
 }
 
-td {
-  padding: 50px;
-  text-align: center;
+.deadlines-container th,
+.deadlines-container td {
+  padding: 0.5rem;
+  text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-textarea {
-			width: 100%;
-			resize: horizontal;
-		}
-
-table, td {
-  border: 1px solid black;
+.pending-tasks-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-	   
-	   .button1 {
-       top: 86%;
-       left:50%;
-       width:200px;
-       height:40px;
-       position: absolute;
-       }
-	   
-	    .button2 {
-       top:86%;
-       left:35%;
-       width:200px;
-       height:40px;
-       position: absolute;
-       }
-	   
-
-@media (max-width: 768px) {
-  .yellow-panel, .green-panel {
-    width: 100%;
-  }
+.pending-tasks-container li {
+  margin-bottom: 0.5rem;
 }
 
-      .container1 {
-        width: 100%;
-        max-width: 960px;
-        margin: 0 auto;
-		background-color: #F7DD08;
-      }
-	  
-	  .container2 {
-        width: 100%;
-        max-width: 960px;
-        margin: 0 auto;
-		background-color: green;
-      }
+.progress-report-container p {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+}

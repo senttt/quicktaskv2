@@ -1,68 +1,170 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import "./TaskTracker.css";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  set,
+  serverTimestamp,
+} from "firebase/database";
 
 const TaskTracker = () => {
-  return (
-    <div>
-      <div>
-        <div className="sidebar">
-          <div className="logo"></div>
+  const [items, setItems] = useState([]);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [newItem, setNewItem] = useState({
+    name: "",
+    amount: "",
+    price: "",
+    timestamp: null, // initialize timestamp property to null
+  });
 
-          <div className="user-info">
-            <span className="username">John Doe</span>
-            <span className="sign-out">
-              <a href="#">X</a>
-            </span>
-          </div>
+  useEffect(() => {
+    const db = getDatabase();
+    const itemsRef = ref(db, "items");
+    onValue(itemsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const itemArray = Object.keys(data).map((itemId) => ({
+          id: itemId,
+          ...data[itemId],
+        }));
+        setItems(itemArray);
+      }
+    });
+  }, []);
+
+  const handleItemNameChange = (event) => {
+    setNewItem((prevItem) => ({
+      ...prevItem,
+      name: event.target.value,
+    }));
+  };
+
+  const handleItemAmountChange = (event) => {
+    setNewItem((prevItem) => ({
+      ...prevItem,
+      amount: event.target.value,
+    }));
+  };
+
+  const handleItemPriceChange = (event) => {
+    setNewItem((prevItem) => ({
+      ...prevItem,
+      price: event.target.value,
+    }));
+  };
+
+  const handleAddItem = () => {
+    const db = getDatabase();
+    const itemRef = push(ref(db, "items"));
+    set(itemRef, {
+      ...newItem,
+      timestamp: new Date().toLocaleString(), // set timestamp to current date and time
+    });
+    setNewItem({
+      name: "",
+      amount: "",
+      price: "",
+      timestamp: null,
+    });
+  };
+
+  const handleEditItem = (index) => {
+    setEditingIndex(index);
+    setNewItem(items[index]);
+  };
+
+  const handleSaveItem = () => {
+    const db = getDatabase();
+    const itemRef = ref(db, "items/" + newItem.id);
+    set(itemRef, {
+      ...newItem,
+      timestamp: new Date().toLocaleString(), // set timestamp to current date and time
+    });
+    setNewItem({
+      name: "",
+      amount: "",
+      price: "",
+      timestamp: null,
+    });
+    setEditingIndex(null);
+  };
+
+  const handleDeleteItem = (index) => {
+    const db = getDatabase();
+    const itemRef = ref(db, "items/" + items[index].id);
+    set(itemRef, null);
+  };
+
+  return (
+    <div className="task-tracker-container">
+      <div className="input-fields-container">
+        <h2>Add Item</h2>
+        <div className="input-field">
+          <label htmlFor="item-name">Item Name</label>
+          <input
+            type="text"
+            id="item-name"
+            value={newItem.name}
+            onChange={handleItemNameChange}
+          />
         </div>
-        <div className="main">
-          <header1>
-            <h1>Task Tracker</h1>
-          </header1>
-          <header2>
-            <h1>Today's Tasks</h1>
-          </header2>
-          <div className="dashboard-container">
-            <div className="yellow-panel">
-              <h2>Name of Task</h2>
-              <div className="task-list"></div>
-            </div>
-            <div className="yellow-panel">
-              <h2>Current Status</h2>
-              <div className="progress-list"></div>
-            </div>
-            <div className="green-panel">
-              <h2>Due Date</h2>
-              <div className="task-list"></div>
-            </div>
-          </div>
+        <div className="input-field">
+          <label htmlFor="item-amount">Item Amount</label>
+          <input
+            type="number"
+            id="item-amount"
+            value={newItem.amount}
+            onChange={handleItemAmountChange}
+          />
         </div>
-        <center>
+        <div className="input-field">
+          <label htmlFor="item-price">Item Price</label>
+          <input
+            type="number"
+            id="item-price"
+            value={newItem.price}
+            onChange={handleItemPriceChange}
+          />
+        </div>
+        <button
+          onClick={editingIndex !== null ? handleSaveItem : handleAddItem}
+        >
+          {editingIndex !== null ? "Save Item" : "Add Item"}
+        </button>
+      </div>
+      <div className="table-container">
+        <h2>Items List</h2>
+        <div className="scrollable-table">
           <table>
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="number" /></td>
-              </tr>
-              <tr>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="number" /></td>
-              </tr>
-              <tr>
-                <td><input type="text" /></td>
-                <td><input type="text" /></td>
-                <td><input type="number" /></td>
-              </tr>
+              {items.map((item, index) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>{item.amount}</td>
+                  <td>${item.price}</td>
+                  <td>
+                    <button onClick={() => handleEditItem(index)}>Edit</button>
+                    <button onClick={() => handleDeleteItem(index)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        </center>
-        <input type="button" className="anybutton1" id="myab" value="Delete" />
-        <input type="button" className="anybutton2" id="myab" value="Edit" />
-        <input type="button" className="anybutton3" id="myab" value="Add" />
+        </div>
       </div>
     </div>
   );
-}
-
+};
 export default TaskTracker;

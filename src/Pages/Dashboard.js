@@ -1,89 +1,104 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../Firebase/firebaseConfig";
+import { onValue, ref } from "firebase/database";
+import "./Dashboard.css";
 
-function ProgressDashboard() {
+const Dashboard = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [items, setItems] = useState([]);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const userRef = ref(db, "users/" + auth.currentUser.uid + "/userInfo");
+    onValue(userRef, (snapshot) => {
+      const data = snapshot.val();
+      setFirstName(data.firstName);
+      setLastName(data.lastName);
+    });
+
+    const itemsRef = ref(db, "items");
+    onValue(itemsRef, (snapshot) => {
+      const data = snapshot.val();
+      const itemsArray = Object.keys(data).map((key) => ({
+        id: key,
+        ...data[key],
+      }));
+      setItems(itemsArray);
+    });
+
+    const tasksRef = ref(db, "tasks");
+    onValue(tasksRef, (snapshot) => {
+      const data = snapshot.val();
+      const tasksArray = Object.keys(data).map((key) => ({
+        id: key,
+        ...data[key],
+      }));
+      setTasks(tasksArray);
+    });
+  }, []);
+
   return (
-    <div className="main">
-      <header1>
-        <h1>Real-Time Progress Dashboard</h1>
-      </header1>
-
-      <br />
-      <br />
-      <br />
-      <br />
-
-      <h3 align="left"> Today's Task </h3>
-      <center>
-        <div className="container1">
-          <table>
-            <th> Deadlines:</th>
-            <tbody>
-              <tr>
-                <td>
-                  <input type="text" name="task" />
-                </td>
+    <div className="dashboard-container">
+      <h1>
+        Welcome, {firstName} {lastName}!
+      </h1>
+      <div className="items-container">
+        <h2>Items</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.price}</td>
+                <td>{item.amount}</td>
+                <td>{item.timestamp}</td>
               </tr>
-
-              <tr>
-                <td>
-                  <input type="text" name="task" />
-                </td>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="deadlines-container">
+        <h2>Today's Deadlines</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map((task) => (
+              <tr key={task.id}>
+                <td>{task.task}</td>
+                <td>{task.time}</td>
               </tr>
-
-              <tr>
-                <td>
-                  <input type="text" name="task" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <input type="button" className="button1" id="myab" value="Add" />
-          <input type="button" className="button2" id="myab" value="Delete" />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-
-          <label for="task">Pending Tasks:</label>
-          <select name="pending" id="pending">
-            <optgroup label="Stock Check">
-              <option value="John">John</option>
-              <option value="Maria">Maria</option>
-            </optgroup>
-            <optgroup label="Order Check">
-              <option value="John">John</option>
-              <option value="Maria">Maria</option>
-            </optgroup>
-          </select>
-
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-
-          <div className="container2">
-            <label for="report">Progress Report:</label>
-            <select name="report" id="report">
-              <optgroup label="Client Owners">
-                <option value="Company A"> Company A</option>
-                <option value="Company B"> Company B</option>
-              </optgroup>
-            </select>
-          </div>
-          <br />
-          <br />
-          <br />
-          <br />
-        </div>
-      </center>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pending-tasks-container">
+        <h2>Pending Tasks</h2>
+        <ul>
+          <li>Task 4</li>
+          <li>Task 5</li>
+          <li>Task 6</li>
+        </ul>
+      </div>
+      <div className="progress-report-container">
+        <h2>Progress Report</h2>
+        <p>Your progress so far: 50%</p>
+      </div>
     </div>
   );
-}
+};
 
-export default ProgressDashboard;
+export default Dashboard;

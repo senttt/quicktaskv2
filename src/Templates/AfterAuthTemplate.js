@@ -1,8 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { auth } from "../Firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 import "./AfterAuthTemplate.css";
 
 function AfterAuthTemplate() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    auth.signOut();
+    navigate("./login");
+  };
+
   return (
     <div className="sidebar">
       <div className="logo">
@@ -25,6 +33,7 @@ function AfterAuthTemplate() {
           <Link to="/data-analysis">Data Analysis</Link>
         </li>
       </ul>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
